@@ -23,16 +23,43 @@
 
 ## 📚 学习路线
 
+### 整体架构
+
 ```
-第 1 章          第 2 章          第 3 章          第 4 章          第 5 章          第 6 章          第 7 章
-MDP 基础    →   动态规划    →   蒙特卡洛    →   时序差分    →   函数近似    →   策略梯度    →   高级策略
-  🍱            🗺️            🃏            🏃            🤹            🚗            🤖
-  午餐选择      网格寻路       21 点游戏      悬崖行走       CartPole      赛车控制      对话优化
-                                              💎            🕹️            🎯            📝
-                                              迷宫寻宝      打砖块        机械臂        文本生成
-                                              🐍            🚀            🎮
-                                              贪吃蛇        登月器        乒乓球
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                        强化学习学习路径                                      │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  基础篇          核心篇 ⭐           进阶篇              前沿篇 ⭐           │
+│  ┌─────┐        ┌──────────┐       ┌──────────┐       ┌──────────┐        │
+│  │第 1 章│   →    │第 2 章     │   →   │第 3-4 章   │   →   │第 5-7 章   │        │
+│  │ MDP │        │ 动态规划  │       │ 蒙特卡洛  │       │ 函数近似  │        │
+│  └─────┘        └──────────┘       │ 时序差分  │       │ 策略梯度  │        │
+│                                     └──────────┘       │ 高级策略  │        │
+│                                                         └──────────┘        │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
+
+### 章节详情
+
+| 章节 | 主题 | 核心算法 | 游戏/应用 | 难度 | 前置 |
+|------|------|----------|-----------|------|------|
+| **第 1 章** | MDP 基础 | Bellman 方程、价值函数、策略迭代 | 🍱 午餐选择、🚇 路线规划 | ⭐ | 无 |
+| **第 2 章** | 动态规划 | Policy Iteration、Value Iteration、MCTS | 🗺️ 网格寻路、🎯 AlphaGo | ⭐⭐ | 第 1 章 |
+| **第 3 章** | 蒙特卡洛 | MC Prediction、MC Control、重要性采样 | 🃏 21 点、🎰 老虎机 | ⭐⭐ | 第 1 章 |
+| **第 4 章** | 时序差分 ⭐ | SARSA、Q-Learning、Expected SARSA、6 种探索策略 | 🏃 悬崖行走、💎 迷宫、🐍 贪吃蛇 | ⭐⭐⭐ | 第 3 章 |
+| **第 5 章** | 函数近似 | 线性近似、DQN、目标网络、经验回放 | 🤹 CartPole、🕹️ 打砖块、🚀 登月器 | ⭐⭐⭐ | 第 4 章 |
+| **第 6 章** | 策略梯度 | REINFORCE、A2C、DDPG、TD3 | 🚗 赛车、🎯 机械臂、🎮 乒乓球 | ⭐⭐⭐⭐ | 第 5 章 |
+| **第 7 章** | 高级策略 ⭐ | **PPO**、**SAC**、**DPO**、**GRPO**、Offline RL | 🤖 对话优化、📝 文本生成 | ⭐⭐⭐⭐⭐ | 第 6 章 |
+
+### 关键里程碑
+
+| 阶段 | 章节 | 学完后你能... | 预计时间 |
+|------|------|---------------|----------|
+| **🌱 入门** | 第 1-2 章 | 用 MDP 建模实际问题，理解最优策略 | 1-2 周 |
+| **🌿 基础** | 第 3-4 章 | 实现经典 RL 算法，理解探索 - 利用权衡 | 2-3 周 |
+| **🌳 进阶** | 第 5-6 章 | 训练深度 RL 智能体，处理连续控制 | 3-4 周 |
+| **🚀 前沿** | 第 7 章 | 理解 LLM 后训练（DPO/GRPO）的 RL 原理 | 2-3 周 |
 
 ---
 
@@ -40,100 +67,50 @@ MDP 基础    →   动态规划    →   蒙特卡洛    →   时序差分    
 
 ```
 rl-guide/
-├── README.md                        # 本文件
-├── requirements.txt                 # Python 依赖
-├── .gitignore                       # Git 忽略文件
+├── README.md                         # 本文件
+├── requirements.txt                  # Python 依赖
+├── pyproject.toml                    # 项目配置
+├── Makefile                          # 快捷命令
 │
-├── chapter_01_mdp_fundamentals/     # 第 1 章：MDP 基础
-│   ├── README.md                    # 章节说明
-│   ├── 01_mdp_core.py               # MDP 核心类
-│   ├── 02_bellman_equation.py       # 贝尔曼方程
-│   ├── 03_value_function.py         # 价值函数
-│   ├── 04_policy.py                 # 策略定义
-│   └── games/                       # 应用场景
-│       ├── lunch_decision.py        # 🍱 午餐选择器
-│       └── commute_planner.py       # 🚇 下班路线规划
+├── chapter_01_mdp_fundamentals/      # 第 1 章：MDP 基础
+├── chapter_02_dynamic_programming/   # 第 2 章：动态规划
+├── chapter_03_monte_carlo/           # 第 3 章：蒙特卡洛
+├── chapter_04_temporal_difference/   # 第 4 章：时序差分 ⭐
+├── chapter_05_function_approximation/# 第 5 章：函数近似
+├── chapter_06_policy_gradient/       # 第 6 章：策略梯度
+├── chapter_07_advanced_policy/       # 第 7 章：高级策略 ⭐
+│   ├── ppo.py                        # PPO 算法
+│   ├── sac.py                        # SAC 算法
+│   ├── dpo.py                        # DPO（LLM 对齐）
+│   ├── grpo.py                       # GRPO（推理优化）
+│   └── offline_rl.py                 # Offline RL（BC/CQL/IQL）
 │
-├── chapter_02_dynamic_programming/  # 第 2 章：动态规划 + 搜索
-│   ├── README.md
-│   ├── 01_policy_evaluation.py
-│   ├── 02_policy_iteration.py
-│   ├── 03_value_iteration.py
-│   ├── 04_mcts.py                   # ⭐ 蒙特卡洛树搜索
-│   └── games/
-│       ├── gridworld_nav.py         # 🗺️ 网格寻路
-│       ├── warehouse_robot.py       # 📦 仓库搬运
-│       └── alphago_simple.py        # 🎯 简化版 AlphaGo
+├── rl_guide/                         # 核心库
+│   ├── core/                         # 核心抽象
+│   │   ├── mdp.py                    # MDP 五元组
+│   │   ├── policy.py                 # 策略基类
+│   │   ├── value_function.py         # 价值函数
+│   │   └── replay_buffer.py          # 经验回放
+│   └── utils/                        # 工具
+│       ├── visualization.py          # 可视化
+│       └── training_loop.py          # 训练循环
 │
-├── chapter_03_monte_carlo/          # 第 3 章：蒙特卡洛方法
-│   ├── README.md
-│   ├── 01_mc_prediction.py
-│   ├── 02_mc_control.py
-│   ├── 03_on_off_policy.py
-│   └── games/
-│       ├── blackjack.py             # 🃏 21 点游戏
-│       ├── slot_machine.py          # 🎰 老虎机
-│       └── flight_chess.py          # 🎲 飞行棋
+├── tests/                            # 单元测试（171 个测试）
+│   ├── test_core.py
+│   ├── test_utils.py
+│   └── test_chapter_*.py
 │
-├── chapter_04_temporal_difference/  # 第 4 章：时序差分学习 ⭐核心
-│   ├── README.md
-│   ├── 01_td_prediction.py
-│   ├── 02_sarsa.py
-│   ├── 03_q_learning.py
-│   ├── 04_expected_sarsa.py
-│   ├── 05_exploration_strategies.py # ⭐ 探索策略对比
-│   └── games/
-│       ├── cliff_walking.py         # 🏃 悬崖行走
-│       ├── maze_treasure.py         # 💎 迷宫寻宝
-│       └── snake_simple.py          # 🐍 贪吃蛇
-│
-├── chapter_05_function_approximation/ # 第 5 章：函数近似
-│   ├── README.md
-│   ├── 01_linear_approximation.py
-│   ├── 02_neural_network_q.py
-│   ├── 03_dqn.py
-│   └── games/
-│       ├── cartpole_balance.py      # 🤹 倒立摆平衡
-│       ├── breakout_atari.py        # 🕹️ 打砖块
-│       └── lunar_lander.py          # 🚀 登月器
-│
-├── chapter_06_policy_gradient/      # 第 6 章：策略梯度 + 连续控制
-│   ├── README.md
-│   ├── 01_reinforce.py
-│   ├── 02_actor_critic.py
-│   ├── 03_a2c.py
-│   ├── 04_ddpg.py                   # ⭐ DDPG
-│   ├── 05_td3.py                    # ⭐ TD3
-│   └── games/
-│       ├── car_racing.py            # 🚗 赛车控制
-│       ├── robotic_arm.py           # 🎯 机械臂抓取
-│       └── pong_simple.py           # 🎮 乒乓球
-│
-├── chapter_07_advanced_policy/      # 第 7 章：高级策略 + 离线 RL ⭐目标
-│   ├── README.md
-│   ├── 01_trpo.py
-│   ├── 02_ppo.py
-│   ├── 03_sac.py                    # ⭐ SAC
-│   ├── 04_dpo_intuition.py          # DPO 直觉
-│   ├── 05_offline_rl_intro.py       # ⭐ 离线 RL 简介
-│   └── games/
-│       ├── dialogue_optimization.py # 🤖 对话优化
-│       ├── text_generation.py       # 📝 文本生成
-│       └── multi_objective.py       # 🎯 多目标优化
-│
-├── utils/                           # 工具函数
-│   ├── visualization.py             # 可视化工具
-│   ├── metrics.py                   # 性能指标
-│   └── env_wrapper.py               # 环境封装
-│
-├── tests/                           # 测试
-│   ├── test_algorithms.py
-│   └── test_convergence.py
-│
-└── notebooks/                       # Jupyter 笔记本
-    ├── chapter_01_intro.ipynb
-    └── ...
+└── docs/                             # 文档
+    └── 01_architecture/              # 架构设计
 ```
+
+### 每章结构
+
+每章都包含：
+- 📖 `README.md` - 算法原理、数学公式、使用示例
+- 🐍 `*.py` - 模块化算法实现（每个算法 ~200 行）
+- 🎮 `games/` - 游戏化应用场景
+- ✅ `tests/` - 单元测试
 
 ---
 
@@ -244,15 +221,27 @@ python chapter_04_temporal_difference/games/cliff_walking.py
 
 ---
 
-## 📝 项目状态
+## 📊 项目状态
 
-- [x] 项目规划完成
-- [x] 仓库创建
-- [ ] Phase 1: 基础框架（进行中）
-- [ ] Phase 2: 第 1-2 章
-- [ ] Phase 3: 第 3-4 章 ⭐核心
-- [ ] Phase 4: 第 5-6 章
-- [ ] Phase 5: 第 7 章 ⭐目标
+### 完成度
+
+| Phase | 章节 | 状态 | 测试 | 代码行数 |
+|-------|------|------|------|----------|
+| **Phase 1** | 核心框架 | ✅ 完成 | 42 | ~800 |
+| **Phase 2** | 第 1-2 章 | ✅ 完成 | 20 | ~1,200 |
+| **Phase 3** | 第 3-4 章 ⭐ | ✅ 完成 | 45 | ~2,000 |
+| **Phase 4** | 第 5-6 章 | ✅ 完成 | 44 | ~2,500 |
+| **Phase 5** | 第 7 章 ⭐ | ✅ 完成 | 20 | ~2,900 |
+
+**总计**: 171 个测试全部通过 ✅ | ~9,400 行代码
+
+### 算法实现清单
+
+- [x] 经典 RL 算法（MDP、DP、MC、TD）
+- [x] 深度 RL（DQN、函数近似）
+- [x] 策略梯度（REINFORCE、A2C、DDPG、TD3）
+- [x] 前沿算法（**PPO**、**SAC**、**DPO**、**GRPO**）
+- [x] Offline RL（BC、CQL、IQL）
 
 ---
 
