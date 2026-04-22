@@ -7,5 +7,21 @@ from chapter_03_monte_carlo.games.blackjack import (
     state_to_index,
     index_to_state
 )
+from chapter_03_monte_carlo.games.slot_machine import (
+    SlotMachineEnv,
+    SlotMachineWithBonus
+)
+from chapter_03_monte_carlo.games.flight_chess import (
+    FlightChessEnv,
+    FlightChessWithItems
+)
 
-__all__ = ['BlackjackEnv', 'state_to_index', 'index_to_state']
+__all__ = [
+    'BlackjackEnv',
+    'state_to_index',
+    'index_to_state',
+    'SlotMachineEnv',
+    'SlotMachineWithBonus',
+    'FlightChessEnv',
+    'FlightChessWithItems',
+]
