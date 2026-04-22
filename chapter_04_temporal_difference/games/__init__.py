@@ -7,9 +7,21 @@ from chapter_04_temporal_difference.games.windy_gridworld import (
     WindyGridworldEnv,
     WindyGridworldWithStochastic
 )
+from chapter_04_temporal_difference.games.maze_treasure import (
+    MazeTreasureEnv,
+    MazeTreasureWithFog
+)
+from chapter_04_temporal_difference.games.snake_simple import (
+    SnakeSimpleEnv,
+    SnakeWithDirection
+)
 
 __all__ = [
     'CliffWalkingEnv',
     'WindyGridworldEnv',
     'WindyGridworldWithStochastic',
+    'MazeTreasureEnv',
+    'MazeTreasureWithFog',
+    'SnakeSimpleEnv',
+    'SnakeWithDirection',
 ]

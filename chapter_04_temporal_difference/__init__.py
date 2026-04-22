@@ -26,6 +26,17 @@ from chapter_04_temporal_difference.expected_sarsa import (
     compare_td_algorithms
 )
 
+from chapter_04_temporal_difference.exploration_strategies import (
+    ExplorationStrategy,
+    EpsilonGreedy,
+    DecayEpsilonGreedy,
+    BoltzmannExploration,
+    UpperConfidenceBound,
+    ThompsonSampling,
+    NoisyNetwork,
+    create_exploration_strategy
+)
+
 __all__ = [
     # TD Prediction
     'td_0_prediction',
@@ -46,4 +57,14 @@ __all__ = [
     'ExpectedSarsaAgent',
     'expected_sarsa',
     'compare_td_algorithms',
+    
+    # Exploration Strategies
+    'ExplorationStrategy',
+    'EpsilonGreedy',
+    'DecayEpsilonGreedy',
+    'BoltzmannExploration',
+    'UpperConfidenceBound',
+    'ThompsonSampling',
+    'NoisyNetwork',
+    'create_exploration_strategy',
 ]
