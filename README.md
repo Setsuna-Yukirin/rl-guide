@@ -9,7 +9,7 @@
 
 ## 📌 项目简介
 
-**Hermes** 是一个游戏化的强化学习教程仓库，帮助你从经典 RL 算法打底，系统理解 GRPO/DPO/PPO 等 LLM 后训练技术的底层原理。
+**rl-guide** 是一个游戏化的强化学习教程仓库，帮助你从经典 RL 算法打底，系统理解 GRPO/DPO/PPO 等 LLM 后训练技术的底层原理。
 
 ### 🎯 核心理念
 
@@ -39,7 +39,7 @@ MDP 基础    →   动态规划    →   蒙特卡洛    →   时序差分    
 ## 📁 目录结构
 
 ```
-Hermes/
+rl-guide/
 ├── README.md                        # 本文件
 ├── requirements.txt                 # Python 依赖
 ├── .gitignore                       # Git 忽略文件
@@ -277,10 +277,10 @@ MIT License - 详见 [LICENSE](LICENSE) 文件
 
 ## 👤 作者
 
-**Setsuna**
+**Hermes**
 
 - GitHub: [@Setsuna-Yukirin](https://github.com/Setsuna-Yukirin)
-- 项目主页：[Hermes](https://github.com/Setsuna-Yukirin/Hermes)
+- 项目主页：[rl-guide](https://github.com/Setsuna-Yukirin/rl-guide)
 
 ---
 
