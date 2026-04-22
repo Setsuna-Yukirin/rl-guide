@@ -237,7 +237,10 @@ class NeuralQFunction:
             self.q_network = QNetwork(state_dim, n_actions, hidden_dims).to(self.device)
         
         # 目标网络
-        self.target_network = type(self.q_network)(state_dim, n_actions, *hidden_dims).to(self.device)
+        if use_dueling:
+            self.target_network = DuelingQNetwork(state_dim, n_actions, hidden_dims).to(self.device)
+        else:
+            self.target_network = QNetwork(state_dim, n_actions, hidden_dims).to(self.device)
         self.target_network.load_state_dict(self.q_network.state_dict())
         
         # 优化器
