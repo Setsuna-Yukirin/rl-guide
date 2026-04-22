@@ -31,18 +31,18 @@ class TestValueFunction:
     
     def test_compute_V_pi(self, simple_mdp):
         """测试 V_π 计算"""
-        from chapter_01_mdp_fundamentals import value_function
+        from chapter_01_mdp_fundamentals.value_function import compute_V_pi
         
         policy = np.ones((4, 2)) * 0.5
-        V = value_function.compute_V_pi(simple_mdp, policy)
+        V = compute_V_pi(simple_mdp, policy)
         assert V.shape == (4,)
         assert np.all(np.isfinite(V))
     
     def test_policy_iteration(self, simple_mdp):
         """测试策略迭代"""
-        from chapter_01_mdp_fundamentals import value_function
+        from chapter_01_mdp_fundamentals.value_function import policy_iteration
         
-        V, policy, iters = value_function.policy_iteration(simple_mdp)
+        V, policy, iters = policy_iteration(simple_mdp)
         assert V.shape == (4,)
         assert policy.shape == (4, 2)
         assert iters > 0
