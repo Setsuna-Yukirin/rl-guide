@@ -172,9 +172,9 @@ class DDPGAgent:
         
         states = torch.FloatTensor(states).to(self.device)
         actions = torch.FloatTensor(actions).to(self.device)
-        rewards = torch.FloatTensor(rewards).to(self.device)
+        rewards = torch.FloatTensor(rewards).unsqueeze(1).to(self.device)
         next_states = torch.FloatTensor(next_states).to(self.device)
-        dones = torch.FloatTensor(dones).to(self.device)
+        dones = torch.FloatTensor(dones).unsqueeze(1).to(self.device)
         
         # Critic 更新
         with torch.no_grad():
@@ -261,9 +261,9 @@ class TD3Agent(DDPGAgent):
         
         states = torch.FloatTensor(states).to(self.device)
         actions = torch.FloatTensor(actions).to(self.device)
-        rewards = torch.FloatTensor(rewards).to(self.device)
+        rewards = torch.FloatTensor(rewards).unsqueeze(1).to(self.device)
         next_states = torch.FloatTensor(next_states).to(self.device)
-        dones = torch.FloatTensor(dones).to(self.device)
+        dones = torch.FloatTensor(dones).unsqueeze(1).to(self.device)
         
         # Critic 更新
         with torch.no_grad():

@@ -146,9 +146,9 @@ class ActorCriticAgent:
             _, next_value = self.network(state_tensor)
             next_value = 0.0 if done else next_value.squeeze(0)
         
-        # 计算 TD 误差
+        # 计算折扣回报
         rewards = torch.tensor(self.rewards, dtype=torch.float32).to(self.device)
-        values = torch.cat(self.values)
+        values = torch.cat([v.squeeze(0) for v in self.values])  # 修复形状
         
         # 计算回报
         returns = []
@@ -304,7 +304,7 @@ class A2CAgent:
         
         # 计算 n 步回报
         returns = self.compute_nstep_returns(next_value)
-        values = torch.stack(self.values)
+        values = torch.stack(self.values).squeeze(-1)  # 修复形状
         
         # 优势
         advantages = returns - values

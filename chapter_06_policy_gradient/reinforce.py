@@ -68,16 +68,15 @@ class PolicyNetwork(nn.Module):
             action: 动作索引
             log_prob: 动作的对数概率
         """
-        with torch.no_grad():
-            state_tensor = torch.FloatTensor(state).unsqueeze(0)
-            probs = self.forward(state_tensor)
-            
-            # 采样动作
-            dist = torch.distributions.Categorical(probs)
-            action = dist.sample()
-            log_prob = dist.log_prob(action)
-            
-            return int(action.item()), log_prob
+        state_tensor = torch.FloatTensor(state).unsqueeze(0)
+        probs = self.forward(state_tensor)
+        
+        # 采样动作
+        dist = torch.distributions.Categorical(probs)
+        action = dist.sample()
+        log_prob = dist.log_prob(action)
+        
+        return int(action.item()), log_prob
 
 
 class GaussianPolicyNetwork(nn.Module):
