@@ -354,6 +354,21 @@ class TabularMDP(MDP):
         
         state = np.random.randint(self.nS)
         return state, {}
+    
+    def get_transition(self, state: int, action: int) -> List[Tuple[float, int, float, bool]]:
+        """
+        获取状态转移概率
+        
+        Args:
+            state: 当前状态
+            action: 动作
+            
+        Returns:
+            [(prob, next_state, reward, done), ...]
+        """
+        if state in self.P and action in self.P[state]:
+            return self.P[state][action]
+        return []
 
 
 if __name__ == "__main__":
