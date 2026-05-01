@@ -39,7 +39,7 @@ jobs:
             --exclude='report' \
             ./ report/docs/rl-guide/
 
-      - name: Update mkdocs.yml nav
+      - name: Update rl-guide nav in mkdocs.yml
         run: |
           cd report
           python3 << 'PYEOF'
@@ -48,7 +48,7 @@ jobs:
           with open("mkdocs.yml", "r") as f:
               content = f.read()
 
-          # --- 自动生成 rl-guide nav 条目 ---
+          # 自动生成 rl-guide 章节条目
           rl_guide_dir = "docs/rl-guide"
           title_map = {
               "01": "MDP 基础", "02": "动态规划", "03": "蒙特卡洛",
@@ -64,30 +64,20 @@ jobs:
                   chapter_lines.append(f'    - "第 {int(num)} 章 - {title}": rl-guide/{d}/README.md')
 
           chapters_yaml = '\n'.join(chapter_lines)
-
-          # 构建完整的 rl-guide nav 块
-          rl_guide_block = f'  - 强化学习教程:\n{chapters_yaml}'
+          new_block = f'  - 强化学习教程:\n{chapters_yaml}'
 
           # 替换已有的强化学习教程 nav 块
           pattern = r'  - 强化学习教程:\n(?:    - .*\n)*'
           if re.search(pattern, content):
-              content = re.sub(pattern, rl_guide_block + '\n', content)
+              content = re.sub(pattern, new_block + '\n', content)
           else:
-              # 在 nav: 块的最后一个条目后追加
-              # 找到 nav: 块，在其最后一个顶级条目后插入
-              nav_pattern = r'(nav:\n(?:.*\n)*?)(extra:)'
-              match = re.search(nav_pattern, content)
-              if match:
-                  nav_block = match.group(1)
-                  extra_block = match.group(2)
-                  # 在 nav 块末尾追加 rl-guide
-                  new_nav = nav_block.rstrip() + '\n' + rl_guide_block + '\n\n'
-                  content = content[:match.start()] + new_nav + extra_block + content[match.end():]
+              # 在归档之前插入
+              content = content.replace('  - 归档:', new_block + '\n  - 归档:')
 
           with open("mkdocs.yml", "w") as f:
               f.write(content)
 
-          print("✅ mkdocs.yml nav updated")
+          print("✅ rl-guide nav updated")
           PYEOF
 
       - name: Commit and push to report
