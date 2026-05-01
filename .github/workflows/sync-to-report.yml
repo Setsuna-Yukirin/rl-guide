@@ -35,6 +35,8 @@ jobs:
             --exclude='scripts' \
             --exclude='tests' \
             --exclude='.gitignore' \
+            --exclude='docs' \
+            --exclude='report' \
             ./ report/docs/rl-guide/
 
       - name: Update mkdocs.yml
@@ -68,7 +70,6 @@ jobs:
           if re.search(pattern, content, re.DOTALL):
               content = re.sub(pattern, rl_guide_block.rstrip(), content, flags=re.DOTALL)
           else:
-              # 在 nav 块末尾追加
               content = content.rstrip() + '\n' + rl_guide_block
 
           # --- 2. 添加 arithmatex（如果没有）---
@@ -80,7 +81,6 @@ jobs:
 
           # --- 3. 添加 MathJax extra_javascript（如果没有）---
           if 'mathjax' not in content.lower():
-              # 在 extra: 块之前插入 extra_javascript
               mathjax_block = (
                   'extra_javascript:\n'
                   '  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js\n'
