@@ -1,0 +1,153 @@
+name: Sync to Report
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout rl-guide
+        uses: actions/checkout@v4
+
+      - name: Checkout report
+        uses: actions/checkout@v4
+        with:
+          repository: Setsuna-Yukirin/report
+          token: ${{ secrets.REPORT_TOKEN }}
+          path: report
+
+      - name: Sync files to report/docs/rl-guide
+        run: |
+          # 清空目标目录（保留 .gitkeep 如果有的话）
+          rm -rf report/docs/rl-guide
+          mkdir -p report/docs/rl-guide
+
+          # 复制 markdown 和 Python 源码（排除 git/CI 配置）
+          rsync -av --delete \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='__pycache__' \
+            --exclude='.pylintrc' \
+            --exclude='pyproject.toml' \
+            --exclude='Makefile' \
+            --exclude='requirements.txt' \
+            --exclude='scripts' \
+            --exclude='tests' \
+            --exclude='.gitignore' \
+            ./ report/docs/rl-guide/
+
+      - name: Update mkdocs.yml nav (add rl-guide if missing)
+        run: |
+          cd report
+          python3 << 'PYEOF'
+          import yaml, os
+
+          with open("mkdocs.yml", "r") as f:
+              cfg = yaml.safe_load(f)
+
+          # 自动为每个 chapter 的 README.md 生成 nav 条目
+          rl_guide_dir = "docs/rl-guide"
+          chapters = []
+          if os.path.isdir(rl_guide_dir):
+              for d in sorted(os.listdir(rl_guide_dir)):
+                  readme = os.path.join(rl_guide_dir, d, "README.md")
+                  if os.path.isfile(readme) and d.startswith("chapter_"):
+                      # 从文件夹名提取章节号并格式化标题
+                      num = d.split("_")[1]
+                      title_map = {
+                          "01": "MDP 基础",
+                          "02": "动态规划",
+                          "03": "蒙特卡洛",
+                          "04": "时序差分",
+                          "05": "函数逼近",
+                          "06": "策略梯度",
+                          "07": "高级策略"
+                      }
+                      title = title_map.get(num, d)
+                      chapters.append({f"第 {int(num)} 章 - {title}": f"rl-guide/{d}/README.md"})
+
+          # 检查是否已有 rl-guide 导航
+          nav = cfg.get("nav", [])
+          rl_guide_entry = None
+          for i, item in enumerate(nav):
+              if isinstance(item, dict) and "强化学习教程" in item:
+                  rl_guide_entry = i
+                  break
+
+          rl_guide_nav = {"强化学习教程": chapters}
+
+          if rl_guide_entry is not None:
+              nav[rl_guide_entry] = rl_guide_nav
+          else:
+              nav.append(rl_guide_nav)
+
+          cfg["nav"] = nav
+
+          # 添加 LaTeX/MathJax 支持（如果没有的话）
+          ext = cfg.get("markdown_extensions", [])
+          if "pymdownx.arithmatex" not in ext:
+              ext.append("pymdownx.arithmatex")
+
+          extra_ext = cfg.get("extra", {})
+          if not any("MathJax" in str(v) for v in extra_ext.get("social", [])):
+              pass  # MathJax 在 extra_javascript 中添加
+
+          cfg["markdown_extensions"] = ext
+
+          with open("mkdocs.yml", "w") as f:
+              yaml.dump(cfg, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
+
+          print("✅ mkdocs.yml updated with rl-guide nav")
+          PYEOF
+
+      - name: Add MathJax support
+        run: |
+          cd report
+          # 确保 extra_javascript 包含 MathJax
+          python3 << 'PYEOF'
+          import yaml
+
+          with open("mkdocs.yml", "r") as f:
+              cfg = yaml.safe_load(f)
+
+          extra_js = cfg.get("extra_javascript", [])
+          mathjax_url = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+          mathjax_config = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js?config=TeX-AMS-MML_HTMLorMML"
+
+          if not any("mathjax" in str(js).lower() for js in extra_js):
+              extra_js.append(mathjax_config)
+              cfg["extra_javascript"] = extra_js
+
+          # 确保 arithmatex 配置正确
+          ext = cfg.get("markdown_extensions", [])
+          for i, e in enumerate(ext):
+              if e == "pymdownx.arithmatex":
+                  ext[i] = {"pymdownx.arithmatex": {"generic": True}}
+                  break
+
+          cfg["markdown_extensions"] = ext
+
+          with open("mkdocs.yml", "w") as f:
+              yaml.dump(cfg, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
+
+          print("✅ MathJax support added")
+          PYEOF
+
+      - name: Commit and push to report
+        run: |
+          cd report
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # 只在有变更时提交
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git add -A
+            git commit -m "sync: update rl-guide from $(cd .. && git rev-parse --short HEAD)"
+            git push
+            echo "✅ Pushed to report"
+          fi
