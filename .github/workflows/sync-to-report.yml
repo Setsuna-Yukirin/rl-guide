@@ -39,7 +39,7 @@ jobs:
             --exclude='report' \
             ./ report/docs/rl-guide/
 
-      - name: Update mkdocs.yml
+      - name: Update mkdocs.yml nav
         run: |
           cd report
           python3 << 'PYEOF'
@@ -48,50 +48,46 @@ jobs:
           with open("mkdocs.yml", "r") as f:
               content = f.read()
 
-          # --- 1. 自动生成 rl-guide nav ---
+          # --- 自动生成 rl-guide nav 条目 ---
           rl_guide_dir = "docs/rl-guide"
           title_map = {
               "01": "MDP 基础", "02": "动态规划", "03": "蒙特卡洛",
               "04": "时序差分", "05": "函数逼近", "06": "策略梯度", "07": "高级策略"
           }
 
-          chapters_yaml = ""
+          chapter_lines = []
           for d in sorted(os.listdir(rl_guide_dir)):
               readme = os.path.join(rl_guide_dir, d, "README.md")
               if os.path.isfile(readme) and d.startswith("chapter_"):
                   num = d.split("_")[1]
                   title = title_map.get(num, d)
-                  chapters_yaml += f'        - "第 {int(num)} 章 - {title}": "rl-guide/{d}/README.md"\n'
+                  chapter_lines.append(f'    - "第 {int(num)} 章 - {title}": rl-guide/{d}/README.md')
 
+          chapters_yaml = '\n'.join(chapter_lines)
+
+          # 构建完整的 rl-guide nav 块
           rl_guide_block = f'  - 强化学习教程:\n{chapters_yaml}'
 
-          # 替换已有的 rl-guide nav 或追加
-          pattern = r'  - 强化学习教程:.*?(?=\n  - |\n\Z)'
-          if re.search(pattern, content, re.DOTALL):
-              content = re.sub(pattern, rl_guide_block.rstrip(), content, flags=re.DOTALL)
+          # 替换已有的强化学习教程 nav 块
+          pattern = r'  - 强化学习教程:\n(?:    - .*\n)*'
+          if re.search(pattern, content):
+              content = re.sub(pattern, rl_guide_block + '\n', content)
           else:
-              content = content.rstrip() + '\n' + rl_guide_block
-
-          # --- 2. 添加 arithmatex（如果没有）---
-          if 'pymdownx.arithmatex' not in content:
-              content = content.replace(
-                  '  - tables\n',
-                  '  - tables\n  - pymdownx.arithmatex:\n      generic: true\n'
-              )
-
-          # --- 3. 添加 MathJax extra_javascript（如果没有）---
-          if 'mathjax' not in content.lower():
-              mathjax_block = (
-                  'extra_javascript:\n'
-                  '  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js\n'
-                  '  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js?config=TeX-AMS-MML_HTMLorMML\n\n'
-              )
-              content = content.replace('extra:\n', mathjax_block + 'extra:\n')
+              # 在 nav: 块的最后一个条目后追加
+              # 找到 nav: 块，在其最后一个顶级条目后插入
+              nav_pattern = r'(nav:\n(?:.*\n)*?)(extra:)'
+              match = re.search(nav_pattern, content)
+              if match:
+                  nav_block = match.group(1)
+                  extra_block = match.group(2)
+                  # 在 nav 块末尾追加 rl-guide
+                  new_nav = nav_block.rstrip() + '\n' + rl_guide_block + '\n\n'
+                  content = content[:match.start()] + new_nav + extra_block + content[match.end():]
 
           with open("mkdocs.yml", "w") as f:
               f.write(content)
 
-          print("✅ mkdocs.yml updated")
+          print("✅ mkdocs.yml nav updated")
           PYEOF
 
       - name: Commit and push to report
